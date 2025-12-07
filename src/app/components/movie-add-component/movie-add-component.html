@@ -1,0 +1,16 @@
+<p>Add a movie</p>
+<form [formGroup]="movieForm" (ngSubmit)="onSubmit()">
+  <!-- <label for="id-input">Id: </label>
+  <input id="id-input" type="number" formControlName="id"/>
+  <br> -->
+  <label for="title-input">Title: </label>
+  <input id="title-input" type="text" formControlName="title"/>
+  <br>
+  <label for="year-input">Year: </label>
+  <input id="year-input" type="number" formControlName="year"/>
+  <br>
+  <label for="synopsis-input">Synopsis: </label>
+  <input id="synopsis-input" type="text" formControlName="synopsis"/>
+  <br>
+  <button type="submit" [disabled]="!movieForm.valid">Submit</button>
+</form>

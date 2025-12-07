@@ -1,11 +1,24 @@
-import { Injectable } from '@angular/core';
-import { delay, Observable, of } from 'rxjs';
+import { effect, Injectable } from '@angular/core';
+import { BehaviorSubject, delay, Observable, of, ReplaySubject, switchMap } from 'rxjs';
 import { Movie } from '../models/movie.model';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
+
+  private readonly MOVIES_STORAGE_KEY = 'movies_storage_key';
+  private moviesList$ = new ReplaySubject<Movie[]>(1);
+
+  readonly moviesListSignal = toSignal(this.moviesList$);
+
+  readonly moviesListEffect = effect(() => {
+    const moviesList = this.moviesListSignal();
+    if (moviesList) {
+      //this.saveMoviesInStorage(moviesList);
+    }
+  });
 
   private moviesList: Movie[] = [
     { id : 1,
@@ -70,11 +83,54 @@ export class MovieService {
     },
   ]
 
+  constructor() {
+    //const moviesFromStorage = this.loadMoviesFromStorage();
+    // if (moviesFromStorage) {
+    //   this.moviesList = moviesFromStorage;
+    // }
+    this.moviesList$.next(this.moviesList);
+  }
+
+  // loadMoviesFromStorage(): Movie[] | undefined {
+  //   let moviesFromStorage: Movie[] | undefined;
+  //   const moviesJsonValue = window.localStorage.getItem(this.MOVIES_STORAGE_KEY);
+  //   if (moviesJsonValue) {
+  //     const movies = JSON.parse(moviesJsonValue) as Movie[];
+  //     return moviesFromStorage = movies;
+  //   }
+  //   return moviesFromStorage;
+  // }
+
+  // saveMoviesInStorage(movies: Movie[]): void {
+  //   const moviesJsonValue = JSON.stringify(movies);
+  //   window.localStorage.setItem(this.MOVIES_STORAGE_KEY, moviesJsonValue);
+  // }
+
+
   getMovies(): Observable<Movie[]> {
-    return of(this.moviesList).pipe(delay(3000));
+    return this.moviesList$.asObservable().pipe(delay(3000));
   }
 
   getMovie(id: number): Observable<Movie | undefined> {
-    return of(this.moviesList.find((m) => m.id === id)).pipe(delay(3000));
+    return this.moviesList$.asObservable().pipe(switchMap((movies) => {
+      const movie = movies.find((m) => {
+        return m.id === id;
+      });
+      return of(movie);
+    }), delay(3000));
+  }
+
+  addMovie(movie: Movie): Observable<void> {
+    const lastExistingId = Math.max(...this.moviesList.map(m => m.id));
+    movie.id = lastExistingId + 1;
+    this.moviesList.push(movie);
+    this.moviesList$.next(this.moviesList);
+    return of();
+  }
+
+  deleteMovie(id: number): Observable<void> {
+    this.moviesList = this.moviesList.filter(m => m.id !== id);
+    this.moviesList$.next(this.moviesList);
+    return of();
   }
 }

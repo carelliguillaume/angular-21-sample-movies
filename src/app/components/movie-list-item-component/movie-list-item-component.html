@@ -1,1 +1,1 @@
-<li>Id: {{ movie().id }}, Title: {{ movie().title }}, Year: {{ movie().year }}</li>
+<li>Id: {{ movie().id }}, Title: {{ movie().title }}, Year: {{ movie().year }} <button (click)="deleteMovie($event);$event.stopPropagation()">Delete</button></li>
