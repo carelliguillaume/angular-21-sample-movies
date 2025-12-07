@@ -11,14 +11,6 @@ export class MovieService {
   private readonly MOVIES_STORAGE_KEY = 'movies_storage_key';
   private moviesList$ = new ReplaySubject<Movie[]>(1);
 
-  readonly moviesListSignal = toSignal(this.moviesList$);
-
-  readonly moviesListEffect = effect(() => {
-    const moviesList = this.moviesListSignal();
-    if (moviesList) {
-      //this.saveMoviesInStorage(moviesList);
-    }
-  });
 
   private moviesList: Movie[] = [
     { id : 1,
@@ -84,27 +76,38 @@ export class MovieService {
   ]
 
   constructor() {
-    //const moviesFromStorage = this.loadMoviesFromStorage();
-    // if (moviesFromStorage) {
-    //   this.moviesList = moviesFromStorage;
-    // }
+    const moviesFromStorage = this.loadMoviesFromStorage();
+    if (moviesFromStorage) {
+      this.moviesList = moviesFromStorage;
+    }
     this.moviesList$.next(this.moviesList);
+
+    const moviesListSignal = toSignal(this.moviesList$.asObservable(), { initialValue: [] });
+
+    const moviesListEffect = effect(() => {
+    const moviesList = moviesListSignal();
+    console.log('3B - MovieService - moviesListEffect', moviesList);
+    if (moviesList) {
+      this.saveMoviesInStorage(moviesList);
+    }
+  });
+
   }
 
-  // loadMoviesFromStorage(): Movie[] | undefined {
-  //   let moviesFromStorage: Movie[] | undefined;
-  //   const moviesJsonValue = window.localStorage.getItem(this.MOVIES_STORAGE_KEY);
-  //   if (moviesJsonValue) {
-  //     const movies = JSON.parse(moviesJsonValue) as Movie[];
-  //     return moviesFromStorage = movies;
-  //   }
-  //   return moviesFromStorage;
-  // }
+  loadMoviesFromStorage(): Movie[] | undefined {
+    let moviesFromStorage: Movie[] | undefined;
+    const moviesJsonValue = window.localStorage.getItem(this.MOVIES_STORAGE_KEY);
+    if (moviesJsonValue) {
+      const movies = JSON.parse(moviesJsonValue) as Movie[];
+      return moviesFromStorage = movies;
+    }
+    return moviesFromStorage;
+  }
 
-  // saveMoviesInStorage(movies: Movie[]): void {
-  //   const moviesJsonValue = JSON.stringify(movies);
-  //   window.localStorage.setItem(this.MOVIES_STORAGE_KEY, moviesJsonValue);
-  // }
+  saveMoviesInStorage(movies: Movie[]): void {
+    const moviesJsonValue = JSON.stringify(movies);
+    window.localStorage.setItem(this.MOVIES_STORAGE_KEY, moviesJsonValue);
+  }
 
 
   getMovies(): Observable<Movie[]> {
@@ -124,6 +127,7 @@ export class MovieService {
     const lastExistingId = Math.max(...this.moviesList.map(m => m.id));
     movie.id = lastExistingId + 1;
     this.moviesList.push(movie);
+    this.moviesList = [...this.moviesList];
     this.moviesList$.next(this.moviesList);
     return of();
   }
