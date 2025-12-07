@@ -85,20 +85,37 @@ export class MovieService {
     const moviesListSignal = toSignal(this.moviesList$.asObservable(), { initialValue: [] });
 
     const moviesListEffect = effect(() => {
-    const moviesList = moviesListSignal();
-    console.log('3B - MovieService - moviesListEffect', moviesList);
-    if (moviesList) {
-      this.saveMoviesInStorage(moviesList);
-    }
-  });
-
+      const moviesList = moviesListSignal();
+      console.log('3B - MovieService - moviesListEffect', moviesList);
+      if (moviesList) {
+        this.saveMoviesInStorage(moviesList);
+      }
+    });
   }
+
+
+
+  dateISORegex =
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/; // format ISO UTC de toISOString()
+
+  parseWithDates<T>(json: string): T {
+    return JSON.parse(json, (_key, value) => {
+      // Ne touche qu'aux strings qui ressemblent à une date ISO
+      if (typeof value === 'string' && this.dateISORegex.test(value)) {
+        const d = new Date(value);
+        return isNaN(d.getTime()) ? value : d; // sécurité si invalide
+      }
+      return value;
+    });
+  }
+
+
 
   loadMoviesFromStorage(): Movie[] | undefined {
     let moviesFromStorage: Movie[] | undefined;
     const moviesJsonValue = window.localStorage.getItem(this.MOVIES_STORAGE_KEY);
     if (moviesJsonValue) {
-      const movies = JSON.parse(moviesJsonValue) as Movie[];
+      const movies = this.parseWithDates<Movie[]>(moviesJsonValue);
       return moviesFromStorage = movies;
     }
     return moviesFromStorage;
@@ -129,12 +146,12 @@ export class MovieService {
     this.moviesList.push(movie);
     this.moviesList = [...this.moviesList];
     this.moviesList$.next(this.moviesList);
-    return of();
+    return of(void 0);
   }
 
   deleteMovie(id: number): Observable<void> {
     this.moviesList = this.moviesList.filter(m => m.id !== id);
     this.moviesList$.next(this.moviesList);
-    return of();
+    return of(void 0);
   }
 }

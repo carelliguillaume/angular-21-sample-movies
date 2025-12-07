@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Movie } from '../../models/movie.model';
 import { MovieService } from '../../services/movie-service';
@@ -15,6 +15,15 @@ export class MovieAddComponent {
   private readonly movieService = inject(MovieService);
 
   readonly addResultMsg = signal<string>('');
+
+  readonly addResultMsgEffect = effect(() => {
+    const addResultMsgValue = this.addResultMsg();
+    if(addResultMsgValue && addResultMsgValue !== '') {
+      setTimeout(() => {
+        this.addResultMsg.set('');
+      }, 2000);
+    }
+  });
 ;
   movieForm = new FormGroup({
     id: new FormControl(0, [Validators.required]),
@@ -24,7 +33,7 @@ export class MovieAddComponent {
   });
   onSubmit() {
     // TODO: Use EventEmitter with form value
-    console.warn('3B - MovieAddComponent - onSubmit - movieForm.value', this.movieForm.value);
+    console.log('3B - MovieAddComponent - onSubmit - movieForm.value', this.movieForm.value);
 
     const movie: Movie = {
       id: this.movieForm.controls.id.value ?? 0,

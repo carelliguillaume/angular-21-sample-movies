@@ -3,10 +3,13 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { MovieService } from '../../services/movie-service';
+import { ActorListItemComponent } from '../actor-list-item-component/actor-list-item-component';
 
 @Component({
   selector: 'app-movie-detail-component',
-  imports: [],
+  imports: [
+    ActorListItemComponent,
+],
   templateUrl: './movie-detail-component.html',
   styleUrl: './movie-detail-component.scss',
 })

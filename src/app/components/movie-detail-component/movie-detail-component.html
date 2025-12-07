@@ -13,7 +13,7 @@
   <p>Actors</p>
   <ul>
     @for(actor of movie.actors; track actor) {
-      <li>FirstName: {{ actor.firstName }}, LastName: {{ actor.lastName }}, Birthdate: {{ actor.birthdate }}</li>
+      <app-actor-list-item-component [actor]="actor"></app-actor-list-item-component>
     }
   </ul>
 }

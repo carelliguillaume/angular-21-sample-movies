@@ -21,6 +21,5 @@ export class MovieListComponent {
   });
 
   constructor() {
-    this.moviesRes.update
   }
 }
