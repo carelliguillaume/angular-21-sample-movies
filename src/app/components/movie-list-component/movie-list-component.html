@@ -1,0 +1,14 @@
+<p>Movie List</p>
+@if(moviesRes.isLoading()) {
+  <p>Chargement des films...</p>
+}
+@else if(moviesRes.error()) {
+  <p>Erreur de chargement des films</p>
+}
+@else if(moviesRes.value(); as movies) {
+  <ul>
+    @for(movie of movies; track movie.id) {
+      <app-movie-list-item-component [routerLink]="['/movie', movie.id]" [movie]="movie"></app-movie-list-item-component>
+    }
+  </ul>
+}

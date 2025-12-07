@@ -1,0 +1,19 @@
+<p>Movie Detail</p>
+@if(movieRes.isLoading()) {
+  <p>Chargement du film ...</p>
+}
+@else if(movieRes.error()) {
+  <p>Erreur de chargement du film</p>
+}
+@else if(movieRes.value(); as movie) {
+  <p>Id: {{ movie.id }}</p>
+  <p>Title: {{ movie.title }}</p>
+  <p>Year: {{ movie.year }}</p>
+  <p>Synopsis: {{ movie.synopsis }}</p>
+  <p>Actors</p>
+  <ul>
+    @for(actor of movie.actors; track actor) {
+      <li>FirstName: {{ actor.firstName }}, LastName: {{ actor.lastName }}, Birthdate: {{ actor.birthdate }}</li>
+    }
+  </ul>
+}

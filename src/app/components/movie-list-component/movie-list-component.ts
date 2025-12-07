@@ -1,0 +1,21 @@
+import { Component, inject } from '@angular/core';
+import { MovieService } from '../../services/movie-service';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { MovieListItemComponent } from "../movie-list-item-component/movie-list-item-component";
+import { RouterLink } from "@angular/router";
+
+@Component({
+  selector: 'app-movie-list-component',
+  imports: [MovieListItemComponent, RouterLink],
+  templateUrl: './movie-list-component.html',
+  styleUrl: './movie-list-component.scss',
+})
+export class MovieListComponent {
+  private readonly movieService = inject(MovieService);
+
+  readonly moviesRes = rxResource({
+    stream: () => {
+      return this.movieService.getMovies();
+    },
+  });
+}
