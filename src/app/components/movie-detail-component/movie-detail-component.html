@@ -13,7 +13,8 @@
   <p>Actors</p>
   <ul>
     @for(actor of movie.actors; track actor) {
-      <app-actor-list-item-component [actor]="actor"></app-actor-list-item-component>
+      <app-actor-list-item-component [actor]="actor" (deleteActor)="deleteActor($event)"></app-actor-list-item-component>
     }
   </ul>
+  <app-actor-add-component [movie]="movie"></app-actor-add-component>
 }

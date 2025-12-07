@@ -24,7 +24,7 @@ export class MovieAddComponent {
       }, 2000);
     }
   });
-;
+
   movieForm = new FormGroup({
     id: new FormControl(0, [Validators.required]),
     title: new FormControl('Exemple de titre', [Validators.required]),

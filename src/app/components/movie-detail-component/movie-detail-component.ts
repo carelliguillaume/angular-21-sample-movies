@@ -4,11 +4,14 @@ import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { MovieService } from '../../services/movie-service';
 import { ActorListItemComponent } from '../actor-list-item-component/actor-list-item-component';
+import { ActorAddComponent } from "../actor-add-component/actor-add-component";
+import { Actor } from '../../models/actor.model';
 
 @Component({
   selector: 'app-movie-detail-component',
   imports: [
     ActorListItemComponent,
+    ActorAddComponent
 ],
   templateUrl: './movie-detail-component.html',
   styleUrl: './movie-detail-component.scss',
@@ -31,5 +34,15 @@ export class MovieDetailComponent {
     },
   });
 
+  deleteActor(event: Actor): void {
+    const movie = this.movieRes.value();
+    if (movie) {
+      movie.actors = movie.actors.filter(a => a.firstName !== event.firstName && a.lastName !== event.lastName && a.birthdate !== event.birthdate);
+      this.movieService.updateMovie(movie).subscribe({
+        next: () => {},
+        error: () => {}
+      });
+    }
+  }
 
 }

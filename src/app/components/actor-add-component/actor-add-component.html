@@ -1,0 +1,14 @@
+<p>Add an actor</p>
+<form [formGroup]="actorForm" (ngSubmit)="onSubmit()">
+  <label for="first-name-input">FirstName: </label>
+  <input id="first-name-input" type="text" formControlName="firstName"/>
+  <br>
+  <label for="last-name-input">LastName: </label>
+  <input id="last-name-input" type="text" formControlName="lastName"/>
+  <br>
+  <label for="birthdate-input">Synopsis: </label>
+  <input id="birthdate-input" type="date" formControlName="birthdate"/>
+  <br>
+  <button type="submit" [disabled]="!actorForm.valid">Submit</button>
+</form>
+<p>{{ addResultMsg() }}</p>

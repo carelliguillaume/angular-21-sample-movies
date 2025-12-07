@@ -1,1 +1,1 @@
-<li>FirstName: {{ actor().firstName }}, LastName: {{ actor().lastName }}, Birthdate: {{ actor().birthdate | date:'yyyy/MM/dd' }}, Age: {{ actor().birthdate | age }}</li>
+<li>FirstName: {{ actor().firstName }}, LastName: {{ actor().lastName }}, Birthdate: {{ actor().birthdate | date:'yyyy/MM/dd' }}, Age: {{ actor().birthdate | age }} <button (click)="deleteActorButtonClick($event);$event.stopPropagation()">Delete</button></li>

@@ -1,5 +1,5 @@
 import { effect, Injectable } from '@angular/core';
-import { BehaviorSubject, delay, Observable, of, ReplaySubject, switchMap } from 'rxjs';
+import { delay, Observable, of, ReplaySubject, switchMap } from 'rxjs';
 import { Movie } from '../models/movie.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -151,6 +151,14 @@ export class MovieService {
 
   deleteMovie(id: number): Observable<void> {
     this.moviesList = this.moviesList.filter(m => m.id !== id);
+    this.moviesList$.next(this.moviesList);
+    return of(void 0);
+  }
+
+  updateMovie(movieUpdated: Movie): Observable<void> {
+    this.moviesList = this.moviesList.filter(m => m.id !== movieUpdated.id);
+    this.moviesList.push(movieUpdated);
+    this.moviesList = this.moviesList.sort((a, b) => a.id - b.id);
     this.moviesList$.next(this.moviesList);
     return of(void 0);
   }
